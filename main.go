@@ -41,7 +41,7 @@ func main() {
 		if p.position.Y <= 0 {
 			break
 		}
-		fmt.Printf("%+v\n", p)
+		fmt.Printf("%+v\n", p.position)
 		p = tick(e, p)
 		ts++
 	}
