@@ -88,36 +88,9 @@ func (t Tuple) Cross(o Tuple) Tuple {
 		// err handle pls
 		panic("Cross product only supported for vectors")
 	}
-	/*
-		return vector(t.y * o.z - t.z * o.y,
-		t.z * o.x - t.x * o.z,
-		t.x * o.y - t.y * o.x)
-	*/
 	return NewVector(
 		(t.Y*o.Z)-(t.Z*o.Y),
 		(t.Z*o.X)-(t.X*o.Z),
 		(t.X*o.Y)-(t.Y*o.X),
 	)
-}
-
-/*
-	end of chapter messing around:
-*/
-// type point Tuple
-// type vector Tuple
-
-type projectile struct {
-	position Tuple
-	velocity Tuple
-}
-
-type environment struct {
-	gravity Tuple
-	wind    Tuple
-}
-
-func tick(e environment, p projectile) projectile {
-	pos := p.position.Add(Tuple(p.velocity))
-	vel := p.velocity.Add(Tuple(e.gravity))
-	return projectile{pos, vel}
 }
