@@ -54,8 +54,8 @@ func (t Tuple) Neg() Tuple {
 
 }
 
-func (t Tuple) Mul(v float64) Tuple {
-	return Tuple{t.X * v, t.Y * v, t.Z * v, t.W * v}
+func (t Tuple) Mul(s float64) Tuple {
+	return Tuple{t.X * s, t.Y * s, t.Z * s, t.W * s}
 }
 
 func (t Tuple) Div(v float64) Tuple {

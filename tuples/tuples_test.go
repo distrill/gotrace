@@ -1,7 +1,6 @@
 package tuples
 
 import (
-	// "fmt"
 	"github.com/stretchr/testify/assert"
 	"math"
 	"testing"
