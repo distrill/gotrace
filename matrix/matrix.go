@@ -32,19 +32,28 @@ func NewIdentityMatrix(m int) Matrix {
 	return mat
 }
 
+func (A Matrix) String() string {
+	str := "\n---------------------------\n"
+	for _, row := range A {
+		str += fmt.Sprintf("%v\n", row)
+	}
+	str += "---------------------------\n"
+	return str
+}
+
 // Mul - multiple a matrix by another matrix
-func (m Matrix) MulM(o Matrix) (Matrix, error) {
-	if len(m[0]) != len(o) {
+func (A Matrix) MulM(B Matrix) (Matrix, error) {
+	if len(A[0]) != len(B) {
 		return nil, fmt.Errorf("LH matrix width must equal RH matrix height")
 	}
 
-	result := NewMatrix(len(m), len(m[0]))
+	result := NewMatrix(len(A), len(A[0]))
 
-	for r := 0; r < len(m); r++ {
-		for c := 0; c < len(o[0]); c++ {
+	for r := 0; r < len(A); r++ {
+		for c := 0; c < len(B[0]); c++ {
 			e := 0.0
-			for i := 0; i < len(m[0]); i++ {
-				e += m[r][i] * o[i][c]
+			for i := 0; i < len(A[0]); i++ {
+				e += A[r][i] * B[i][c]
 			}
 			result[r][c] = e
 		}
@@ -54,14 +63,14 @@ func (m Matrix) MulM(o Matrix) (Matrix, error) {
 }
 
 // MulT - multiply a matrix by a tuple
-func (m Matrix) MulT(t tuples.Tuple) (tuples.Tuple, error) {
-	o := Matrix{
+func (A Matrix) MulT(t tuples.Tuple) (tuples.Tuple, error) {
+	B := Matrix{
 		Row{t.X},
 		Row{t.Y},
 		Row{t.Z},
 		Row{t.W},
 	}
-	r, err := m.MulM(o)
+	r, err := A.MulM(B)
 	if err != nil {
 		// FIXME I do not like this, should return nil, but that makes
 		// this function signature inconsistent from the rest of the project
@@ -70,12 +79,142 @@ func (m Matrix) MulT(t tuples.Tuple) (tuples.Tuple, error) {
 	return tuples.Tuple{r[0][0], r[1][0], r[2][0], r[3][0]}, nil
 }
 
-func (m Matrix) Transpose() Matrix {
-	result := NewMatrix(len(m[0]), len(m))
-	for r := 0; r < len(m); r++ {
-		for c := 0; c < len(m[0]); c++ {
-			result[r][c] = m[c][r]
+// MulS - multiply a matrix by a scalar
+func (A Matrix) MulS(s float64) (Matrix, error) {
+	if len(A) < 1 {
+		return nil, fmt.Errorf("matrix must have length at least 1 for multiplication")
+	}
+
+	B := NewMatrix(len(A), len(A[0]))
+	for r := 0; r < len(A); r++ {
+		for c := 0; c < len(A[0]); c++ {
+			B[r][c] = A[r][c] * s
 		}
 	}
-	return result
+	return B, nil
+}
+
+// DivS - divide a matrix by a scalr
+func (A Matrix) DivS(s float64) (Matrix, error) {
+	return A.MulS(1 / s)
+}
+
+func (A Matrix) Transpose() (Matrix, error) {
+	if len(A) < 1 {
+		return nil, fmt.Errorf("matrix must have length at least 1 for multiplication")
+	}
+
+	B := NewMatrix(len(A[0]), len(A))
+	for r := 0; r < len(A); r++ {
+		for c := 0; c < len(A[0]); c++ {
+			B[r][c] = A[c][r]
+		}
+	}
+	return B, nil
+}
+
+func (A Matrix) Determinant() (float64, error) {
+	if len(A) < 2 || len(A[0]) < 2 {
+		return 0, fmt.Errorf("invalid matrix dimensions for determinant %v x %v", len(A), len(A[0]))
+	}
+
+	if len(A) != len(A[0]) {
+		return 0, fmt.Errorf("matrix must be square to calculate determinant, got %v x %v", len(A), len(A[0]))
+	}
+
+	// 2x2 case is different from the general case
+	if len(A) == 2 {
+		return (A[0][0] * A[1][1]) - (A[0][1] * A[1][0]), nil
+	}
+
+	// general case for larger than 2x2
+	det := 0.0
+	for r := 0; r < len(A[0]); r++ {
+		cof, err := A.Cofactor(0, r)
+		if err != nil {
+			return 0, err
+		}
+		det += A[0][r] * cof
+	}
+	return det, nil
+}
+
+func (A Matrix) Submatrix(m, n int) (Matrix, error) {
+	if m < 0 || m >= len(A) {
+		return nil, fmt.Errorf("invalid index %v for len %v", m, len(A))
+	}
+	if n < 0 || n >= len(A[0]) {
+		return nil, fmt.Errorf("invalid index %v for len %v", n, len(A[0]))
+	}
+	sub := Matrix{}
+	for r := range A {
+		if r != m {
+			row := Row{}
+			for c := range A[r] {
+				if c != n {
+					row = append(row, A[r][c])
+				}
+			}
+			sub = append(sub, row)
+		}
+	}
+	return sub, nil
+}
+
+// Minor - determinant of the submatrix at m, n
+func (A Matrix) Minor(m, n int) (float64, error) {
+	sub, err := A.Submatrix(m, n)
+	if err != nil {
+		return 0, err
+	}
+	return sub.Determinant()
+}
+
+// Cofactor - minor, negated if m + n = odd number
+func (A Matrix) Cofactor(m, n int) (float64, error) {
+	min, err := A.Minor(m, n)
+	if err != nil {
+		return 0, err
+	}
+	if m+n%2 == 0 {
+		return min, nil
+	}
+	return -min, nil
+}
+
+func (A Matrix) Invertible() (bool, error) {
+	det, err := A.Determinant()
+	if err != nil {
+		return false, err
+	}
+	return det != 0, nil
+}
+
+func (A Matrix) Inverse() (Matrix, error) {
+	inv, err := A.Invertible()
+	if err != nil {
+		return nil, err
+	}
+	if !inv {
+		return nil, fmt.Errorf("cannot invert non-invertible matrix")
+	}
+
+	det, err := A.Determinant()
+	if err != nil {
+		return nil, err
+	}
+
+	B := NewMatrix(len(A), len(A[0]))
+	for r := range A {
+		for c := range A[0] {
+			cof, err := A.Cofactor(r, c)
+			if err != nil {
+				return nil, err
+			}
+			// swap row and column here to get transpose
+			B[c][r] = cof / det
+		}
+	}
+
+	return B, nil
 }
