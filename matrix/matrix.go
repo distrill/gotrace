@@ -9,7 +9,7 @@ import (
 // Matrix - indexed row/column (NOTE this is the opposite of canvas)
 type Matrix []Row
 
-// Rowa - matrix row
+// Row - matrix row
 type Row []float64
 
 func NewMatrix(m, n int) Matrix {
