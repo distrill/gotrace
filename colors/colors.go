@@ -10,6 +10,14 @@ type Color struct {
 	Blue  float64
 }
 
+var (
+	Red   = Color{1, 0, 0}
+	Green = Color{0, 1, 0}
+	Blue  = Color{0, 0, 1}
+	Black = Color{0, 0, 0}
+	White = Color{1, 1, 1}
+)
+
 // duplicated from tuple, should be pulled out when we have a better idea what the abstraction looks like
 const epsilon = 0.00001
 

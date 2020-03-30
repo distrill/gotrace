@@ -2,14 +2,12 @@ package main
 
 import (
 	"fmt"
+	"math"
+
+	"github.com/distrill/gotrace/canvas"
+	"github.com/distrill/gotrace/colors"
 	"github.com/distrill/gotrace/tuples"
 )
-
-/*
-	end of chapter messing around:
-*/
-// type point Tuple
-// type vector Tuple
 
 type projectile struct {
 	position tuples.Tuple
@@ -28,22 +26,35 @@ func tick(e environment, p projectile) projectile {
 }
 
 func main() {
-	p := projectile{
-		tuples.NewPoint(0, 1, 0),
-		tuples.NewVector(1, 1, 0).Norm(),
-	}
-	e := environment{
-		tuples.NewVector(0, -0.1, 0),
-		tuples.NewVector(-0.01, 0, 0),
-	}
+	start := tuples.NewPoint(1, 1.5, 0)
+	velocity := tuples.NewVector(1, 2, 0).Norm().Mul(11.25)
+	p := projectile{start, velocity}
+
+	gravity := tuples.NewVector(0, -0.11, 0)
+	wind := tuples.NewVector(-0.01, 0, 0)
+	e := environment{gravity, wind}
+
+	w := 900
+	h := 550
+	c := canvas.NewCanvas(w, h)
+
 	ts := 0
 	for {
 		if p.position.Y <= 0 {
 			break
 		}
-		fmt.Printf("%+v\n", p.position)
+		c.WritePixel(
+			int(math.Round(p.position.X)),
+			h-int(math.Round(p.position.Y)),
+			colors.Red,
+		)
 		p = tick(e, p)
 		ts++
 	}
 	fmt.Printf("%v ticks to hit ground\n", ts)
+	err := c.ToPPM("bh.ppm")
+	if err != nil {
+		panic(err.Error())
+	}
+	fmt.Println("done!")
 }
