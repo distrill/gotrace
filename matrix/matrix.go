@@ -167,6 +167,8 @@ func (A Matrix) Minor(m, n int) (float64, error) {
 	if err != nil {
 		return 0, err
 	}
+	// d, _ := sub.Determinant()
+	// fmt.Printf("%v %v (%v) %v", m, n, d, sub)
 	return sub.Determinant()
 }
 
@@ -176,7 +178,7 @@ func (A Matrix) Cofactor(m, n int) (float64, error) {
 	if err != nil {
 		return 0, err
 	}
-	if m+n%2 == 0 {
+	if (m+n)%2 == 0 {
 		return min, nil
 	}
 	return -min, nil

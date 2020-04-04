@@ -1,7 +1,6 @@
 package matrix
 
 import (
-	"fmt"
 	"testing"
 
 	"github.com/distrill/gotrace/tuples"
@@ -578,38 +577,38 @@ func TestInverse(t *testing.T) {
 		Row{7, 7, -6, -7},
 		Row{1, -3, 7, 4},
 	}
-	// B, err := A.Inverse()
-	// require.Nil(t, err)
-
-	fmt.Println(A)
-	cof, err := A.Cofactor(1, 1)
+	B, err := A.Inverse()
 	require.Nil(t, err)
-	fmt.Println(cof)
-	fmt.Println(A)
 
-	// det, err := A.Determinant()
+	// fmt.Println(A)
+	// cof, err := A.Cofactor(1, 1)
 	// require.Nil(t, err)
-	// assert.Equal(t, 532.0, det)
-	//
-	// cof, err := A.Cofactor(2, 3)
-	// require.Nil(t, err)
-	// assert.Equal(t, -160.0, cof)
-	// assert.Equal(t, -160/532.0, B[3][2])
-	//
-	// cof, err = A.Cofactor(3, 2)
-	// require.Nil(t, err)
-	// assert.Equal(t, 105.0, cof)
-	// assert.Equal(t, 105/532.0, B[2][3])
-	//
-	// expected := Matrix{
-	// 	Row{0.21805, 0.45113, 0.24060, -0.04511},
-	// 	Row{-0.80827, -1.45677, -0.44361, 0.52068},
-	// 	Row{-0.07895, -0.22368, -0.05263, 0.19737},
-	// 	Row{-0.52256, -0.81391, -0.30075, 0.30639},
-	// }
-	// for i := range B {
-	// 	assert.InDeltaSlice(t, expected[i], B[i], 0.0001)
-	// }
+	// fmt.Println(cof)
+	// fmt.Println(A)
+
+	det, err := A.Determinant()
+	require.Nil(t, err)
+	assert.Equal(t, 532.0, det)
+
+	cof, err := A.Cofactor(2, 3)
+	require.Nil(t, err)
+	assert.Equal(t, -160.0, cof)
+	assert.Equal(t, -160/532.0, B[3][2])
+
+	cof, err = A.Cofactor(3, 2)
+	require.Nil(t, err)
+	assert.Equal(t, 105.0, cof)
+	assert.Equal(t, 105/532.0, B[2][3])
+
+	expected := Matrix{
+		Row{0.21805, 0.45113, 0.24060, -0.04511},
+		Row{-0.80827, -1.45677, -0.44361, 0.52068},
+		Row{-0.07895, -0.22368, -0.05263, 0.19737},
+		Row{-0.52256, -0.81391, -0.30075, 0.30639},
+	}
+	for i := range B {
+		assert.InDeltaSlice(t, expected[i], B[i], 0.0001)
+	}
 }
 
 /*
@@ -625,7 +624,6 @@ func TestInverse(t *testing.T) {
 		| 0.35897  | 0.35897  | 0.43590  | 0.92308  |
 		| -0.69231 | -0.69231 | -0.76923 | -1.92308 |
 */
-/*
 func TestInverse2(t *testing.T) {
 	A := Matrix{
 		Row{8, -5, 9, 2},
@@ -645,4 +643,78 @@ func TestInverse2(t *testing.T) {
 		assert.InDeltaSlice(t, expected[i], B[i], 0.0001)
 	}
 }
+
+/*
+	Scenario: Calculating the inverse of a third matrix
+	Given the following 4x4 matrix A:
+		| 9  | 3  | 0  | 9  |
+		| -5 | -2 | -6 | -3 |
+		| -4 | 9  | 6  | 4  |
+		| -7 | 6  | 6  | 2  |
+	Then inverse(A) is the following 4x4 matrix:
+		| -0.04074 | -0.07778 | 0.14444  | -0.22222 |
+		| -0.07778 | 0.03333  | 0.36667  | -0.33333 |
+		| -0.02901 | -0.14630 | -0.10926 | 0.12963  |
+		| 0.17778  | 0.06667  | -0.26667 | 0.33333  |
 */
+func TestInverse3(t *testing.T) {
+	A := Matrix{
+		Row{9, 3, 0, 9},
+		Row{-5, -2, -6, -3},
+		Row{-4, 9, 6, 4},
+		Row{-7, 6, 6, 2},
+	}
+	B, err := A.Inverse()
+	require.Nil(t, err)
+	expected := Matrix{
+		Row{-0.04074, -0.07778, 0.14444, -0.22222},
+		Row{-0.07778, 0.03333, 0.36667, -0.33333},
+		Row{-0.02901, -0.14630, -0.10926, 0.12963},
+		Row{0.17778, 0.06667, -0.26667, 0.33333},
+	}
+	for i := range B {
+		assert.InDeltaSlice(t, expected[i], B[i], 0.0001)
+	}
+}
+
+/*
+	Scenario: Multiplying a product by its inverse
+	Given the following 4x4 matrix A:
+		| 3  | -9 | 7  | 3  |
+		| 3  | -8 | 2  | -9 |
+		| -4 | 4  | 4  | 1  |
+		| -6 | 5  | -1 | 1  |
+	And the following 4x4 matrix B:
+		| 8 | 2  | 2 | 2 |
+		| 3 | -1 | 7 | 0 |
+		| 7 | 0  | 5 | 4 |
+		| 6 | -2 | 0 | 5 |
+	And C ← A * B
+	Then C * inverse(B) = A
+*/
+func TestProductMultiplyItsInverse(t *testing.T) {
+	A := Matrix{
+		Row{3, -9, 7, 3},
+		Row{3, -8, 2, -9},
+		Row{-4, 4, 4, 1},
+		Row{-6, 5, -1, 1},
+	}
+	B := Matrix{
+		Row{8, 2, 2, 2},
+		Row{3, -1, 7, 0},
+		Row{7, 0, 5, 4},
+		Row{6, -2, 0, 5},
+	}
+	C, err := A.MulM(B)
+	require.Nil(t, err)
+
+	Bi, err := B.Inverse()
+	require.Nil(t, err)
+
+	CBi, err := C.MulM(Bi)
+	require.Nil(t, err)
+
+	for i := range A {
+		assert.InDeltaSlice(t, A[i], CBi[i], 0.0001)
+	}
+}
