@@ -1,9 +1,7 @@
-package matrix
+package main
 
 import (
 	"testing"
-
-	"github.com/distrill/gotrace/tuples"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -203,10 +201,10 @@ func TestMulMatrixTuple(t *testing.T) {
 		Row{8, 6, 4, 1},
 		Row{0, 0, 0, 1},
 	}
-	b := tuples.Tuple{1, 2, 3, 1}
+	b := Tuple{1, 2, 3, 1}
 	actual, err := A.MulT(b)
 	require.Nil(t, err)
-	expected := tuples.Tuple{18, 24, 33, 1}
+	expected := Tuple{18, 24, 33, 1}
 	assert.Equal(t, expected, actual)
 }
 
@@ -239,7 +237,7 @@ func TestMulMIdentity(t *testing.T) {
 */
 func TestMulTIdentity(t *testing.T) {
 	I := NewIdentityMatrix(4)
-	a := tuples.Tuple{1, 2, 3, 4}
+	a := Tuple{1, 2, 3, 4}
 	actual, err := I.MulT(a)
 	require.Nil(t, err)
 	assert.Equal(t, a, actual)

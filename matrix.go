@@ -1,9 +1,7 @@
-package matrix
+package main
 
 import (
 	"fmt"
-
-	"github.com/distrill/gotrace/tuples"
 )
 
 // Matrix - indexed row/column (NOTE this is the opposite of canvas)
@@ -71,7 +69,7 @@ func (A Matrix) MustMulM(B Matrix) Matrix {
 }
 
 // MulT - multiply a matrix by a tuple
-func (A Matrix) MulT(t tuples.Tuple) (tuples.Tuple, error) {
+func (A Matrix) MulT(t Tuple) (Tuple, error) {
 	B := Matrix{
 		Row{t.X},
 		Row{t.Y},
@@ -82,12 +80,12 @@ func (A Matrix) MulT(t tuples.Tuple) (tuples.Tuple, error) {
 	if err != nil {
 		// FIXME I do not like this, should return nil, but that makes
 		// this function signature inconsistent from the rest of the project
-		return tuples.Tuple{}, err
+		return Tuple{}, err
 	}
-	return tuples.Tuple{r[0][0], r[1][0], r[2][0], r[3][0]}, nil
+	return Tuple{r[0][0], r[1][0], r[2][0], r[3][0]}, nil
 }
 
-func (A Matrix) MustMulT(t tuples.Tuple) tuples.Tuple {
+func (A Matrix) MustMulT(t Tuple) Tuple {
 	At, err := A.MulT(t)
 	if err != nil {
 		panic(err)

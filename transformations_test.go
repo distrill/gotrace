@@ -1,16 +1,12 @@
-package matrix
+package main
 
 import (
 	"math"
 	"testing"
 
-	"github.com/distrill/gotrace/tuples"
-
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
-
-const epsilon = 0.00001
 
 /*
 	Scenario: Multiplying by a translation matrix
@@ -20,10 +16,10 @@ const epsilon = 0.00001
 */
 func TestMulTranslationMatrix(t *testing.T) {
 	transform := NewTranslation(5, -3, 2)
-	p := tuples.NewPoint(-3, 4, 5)
+	p := NewPoint(-3, 4, 5)
 	actual, err := transform.MulT(p)
 	require.Nil(t, err)
-	expected := tuples.NewPoint(2, 1, 7)
+	expected := NewPoint(2, 1, 7)
 	assert.Equal(t, expected, actual)
 }
 
@@ -38,10 +34,10 @@ func TestMulTranslationMatrixInverse(t *testing.T) {
 	transform := NewTranslation(5, -3, 2)
 	inv, err := transform.Inverse()
 	require.Nil(t, err)
-	p := tuples.NewPoint(-3, 4, 5)
+	p := NewPoint(-3, 4, 5)
 	actual, err := inv.MulT(p)
 	require.Nil(t, err)
-	expected := tuples.NewPoint(-8, 7, 3)
+	expected := NewPoint(-8, 7, 3)
 	assert.Equal(t, expected, actual)
 }
 
@@ -53,7 +49,7 @@ func TestMulTranslationMatrixInverse(t *testing.T) {
 */
 func TestMulTranslationNotAffectVectors(t *testing.T) {
 	transform := NewTranslation(5, -3, 2)
-	v := tuples.NewVector(-3, 4, 5)
+	v := NewVector(-3, 4, 5)
 	actual, err := transform.MulT(v)
 	require.Nil(t, err)
 	assert.Equal(t, v, actual)
@@ -67,10 +63,10 @@ func TestMulTranslationNotAffectVectors(t *testing.T) {
 */
 func TestMulScalingMatrixPoint(t *testing.T) {
 	transform := NewScaling(2, 3, 4)
-	p := tuples.NewPoint(-4, 6, 8)
+	p := NewPoint(-4, 6, 8)
 	actual, err := transform.MulT(p)
 	require.Nil(t, err)
-	expected := tuples.NewPoint(-8, 18, 32)
+	expected := NewPoint(-8, 18, 32)
 	assert.Equal(t, expected, actual)
 }
 
@@ -82,10 +78,10 @@ func TestMulScalingMatrixPoint(t *testing.T) {
 */
 func TestMulScalingMatrixVector(t *testing.T) {
 	transform := NewScaling(2, 3, 4)
-	v := tuples.NewVector(-4, 6, 8)
+	v := NewVector(-4, 6, 8)
 	actual, err := transform.MulT(v)
 	require.Nil(t, err)
-	expected := tuples.NewVector(-8, 18, 32)
+	expected := NewVector(-8, 18, 32)
 	assert.Equal(t, expected, actual)
 }
 
@@ -100,10 +96,10 @@ func TestMulScalingMatrixInverse(t *testing.T) {
 	transform := NewScaling(2, 3, 4)
 	inv, err := transform.Inverse()
 	require.Nil(t, err)
-	v := tuples.NewVector(-4, 6, 8)
+	v := NewVector(-4, 6, 8)
 	actual, err := inv.MulT(v)
 	require.Nil(t, err)
-	expected := tuples.NewVector(-2, 2, 2)
+	expected := NewVector(-2, 2, 2)
 	assert.Equal(t, expected, actual)
 }
 
@@ -115,10 +111,10 @@ func TestMulScalingMatrixInverse(t *testing.T) {
 */
 func TestReflectNegativeScaling(t *testing.T) {
 	transform := NewScaling(-1, 1, 1)
-	p := tuples.NewPoint(2, 3, 4)
+	p := NewPoint(2, 3, 4)
 	actual, err := transform.MulT(p)
 	require.Nil(t, err)
-	expected := tuples.NewPoint(-2, 3, 4)
+	expected := NewPoint(-2, 3, 4)
 	assert.Equal(t, expected, actual)
 }
 
@@ -131,15 +127,15 @@ func TestReflectNegativeScaling(t *testing.T) {
 	And full_quarter * p = point(0, 0, 1)
 */
 func TestRotateAroundX(t *testing.T) {
-	p := tuples.NewPoint(0, 1, 0)
+	p := NewPoint(0, 1, 0)
 	halfQuarter := NewRotationX(math.Pi / 4)
 	fullQuarter := NewRotationX(math.Pi / 2)
 	hqa, err := halfQuarter.MulT(p)
 	require.Nil(t, err)
 	fqa, err := fullQuarter.MulT(p)
 	require.Nil(t, err)
-	hqe := tuples.NewPoint(0, math.Sqrt2/2, math.Sqrt2/2)
-	fqe := tuples.NewPoint(0, 0, 1)
+	hqe := NewPoint(0, math.Sqrt2/2, math.Sqrt2/2)
+	fqe := NewPoint(0, 0, 1)
 	assert.True(t, hqe.Equal(hqa))
 	assert.True(t, fqe.Equal(fqa))
 }
@@ -152,13 +148,13 @@ func TestRotateAroundX(t *testing.T) {
 	Then inv * p = point(0, √2/2, -√2/2)
 */
 func TestInverseRotateX(t *testing.T) {
-	p := tuples.NewPoint(0, 1, 0)
+	p := NewPoint(0, 1, 0)
 	halfQuarter := NewRotationX(math.Pi / 4)
 	inv, err := halfQuarter.Inverse()
 	require.Nil(t, err)
 	actual, err := inv.MulT(p)
 	require.Nil(t, err)
-	expected := tuples.NewPoint(0, math.Sqrt2/2, -math.Sqrt2/2)
+	expected := NewPoint(0, math.Sqrt2/2, -math.Sqrt2/2)
 	assert.True(t, expected.Equal(actual))
 }
 
@@ -171,15 +167,15 @@ func TestInverseRotateX(t *testing.T) {
 	And full_quarter * p = point(1, 0, 0)
 */
 func TestRotateAroundY(t *testing.T) {
-	p := tuples.NewPoint(0, 0, 1)
+	p := NewPoint(0, 0, 1)
 	halfQuarter := NewRotationY(math.Pi / 4)
 	fullQuarter := NewRotationY(math.Pi / 2)
 	hqa, err := halfQuarter.MulT(p)
 	require.Nil(t, err)
 	fqa, err := fullQuarter.MulT(p)
 	require.Nil(t, err)
-	hqe := tuples.NewPoint(math.Sqrt2/2, 0, math.Sqrt2/2)
-	fqe := tuples.NewPoint(1, 0, 0)
+	hqe := NewPoint(math.Sqrt2/2, 0, math.Sqrt2/2)
+	fqe := NewPoint(1, 0, 0)
 	assert.True(t, hqe.Equal(hqa))
 	assert.True(t, fqe.Equal(fqa))
 }
@@ -193,15 +189,15 @@ func TestRotateAroundY(t *testing.T) {
 	And full_quarter * p = point(-1, 0, 0)
 */
 func TestRotateAroundZ(t *testing.T) {
-	p := tuples.NewPoint(0, 1, 0)
+	p := NewPoint(0, 1, 0)
 	halfQuarter := NewRotationZ(math.Pi / 4)
 	fullQuarter := NewRotationZ(math.Pi / 2)
 	hqa, err := halfQuarter.MulT(p)
 	require.Nil(t, err)
 	fqa, err := fullQuarter.MulT(p)
 	require.Nil(t, err)
-	hqe := tuples.NewPoint(-math.Sqrt2/2, math.Sqrt2/2, 0)
-	fqe := tuples.NewPoint(-1, 0, 0)
+	hqe := NewPoint(-math.Sqrt2/2, math.Sqrt2/2, 0)
+	fqe := NewPoint(-1, 0, 0)
 	assert.True(t, hqe.Equal(hqa))
 	assert.True(t, fqe.Equal(fqa))
 }
@@ -214,10 +210,10 @@ func TestRotateAroundZ(t *testing.T) {
 */
 func TestShearXPropY(t *testing.T) {
 	transform := NewShearing(1, 0, 0, 0, 0, 0)
-	p := tuples.NewPoint(2, 3, 4)
+	p := NewPoint(2, 3, 4)
 	actual, err := transform.MulT(p)
 	require.Nil(t, err)
-	expected := tuples.NewPoint(5, 3, 4)
+	expected := NewPoint(5, 3, 4)
 	assert.True(t, expected.Equal(actual))
 }
 
@@ -229,10 +225,10 @@ func TestShearXPropY(t *testing.T) {
 */
 func TestShearXPropZ(t *testing.T) {
 	transform := NewShearing(0, 1, 0, 0, 0, 0)
-	p := tuples.NewPoint(2, 3, 4)
+	p := NewPoint(2, 3, 4)
 	actual, err := transform.MulT(p)
 	require.Nil(t, err)
-	expected := tuples.NewPoint(6, 3, 4)
+	expected := NewPoint(6, 3, 4)
 	assert.True(t, expected.Equal(actual))
 }
 
@@ -244,10 +240,10 @@ func TestShearXPropZ(t *testing.T) {
 */
 func TestShearYPropX(t *testing.T) {
 	transform := NewShearing(0, 0, 1, 0, 0, 0)
-	p := tuples.NewPoint(2, 3, 4)
+	p := NewPoint(2, 3, 4)
 	actual, err := transform.MulT(p)
 	require.Nil(t, err)
-	expected := tuples.NewPoint(2, 5, 4)
+	expected := NewPoint(2, 5, 4)
 	assert.True(t, expected.Equal(actual))
 }
 
@@ -259,10 +255,10 @@ func TestShearYPropX(t *testing.T) {
 */
 func TestShearYPropz(t *testing.T) {
 	transform := NewShearing(0, 0, 0, 1, 0, 0)
-	p := tuples.NewPoint(2, 3, 4)
+	p := NewPoint(2, 3, 4)
 	actual, err := transform.MulT(p)
 	require.Nil(t, err)
-	expected := tuples.NewPoint(2, 7, 4)
+	expected := NewPoint(2, 7, 4)
 	assert.True(t, expected.Equal(actual))
 }
 
@@ -274,10 +270,10 @@ func TestShearYPropz(t *testing.T) {
 */
 func TestShearZPropX(t *testing.T) {
 	transform := NewShearing(0, 0, 0, 0, 1, 0)
-	p := tuples.NewPoint(2, 3, 4)
+	p := NewPoint(2, 3, 4)
 	actual, err := transform.MulT(p)
 	require.Nil(t, err)
-	expected := tuples.NewPoint(2, 3, 6)
+	expected := NewPoint(2, 3, 6)
 	assert.True(t, expected.Equal(actual))
 }
 
@@ -289,10 +285,10 @@ func TestShearZPropX(t *testing.T) {
 */
 func TestShearZPropY(t *testing.T) {
 	transform := NewShearing(0, 0, 0, 0, 0, 1)
-	p := tuples.NewPoint(2, 3, 4)
+	p := NewPoint(2, 3, 4)
 	actual, err := transform.MulT(p)
 	require.Nil(t, err)
-	expected := tuples.NewPoint(2, 3, 7)
+	expected := NewPoint(2, 3, 7)
 	assert.True(t, expected.Equal(actual))
 }
 
@@ -313,7 +309,7 @@ func TestShearZPropY(t *testing.T) {
 	Then p4 = point(15, 0, 7)
 */
 func TestIndividualTransformsAppliedInSequence(t *testing.T) {
-	p := tuples.NewPoint(1, 0, 1)
+	p := NewPoint(1, 0, 1)
 	A := NewRotationX(math.Pi / 2)
 	B := NewScaling(5, 5, 5)
 	C := NewTranslation(10, 5, 7)
@@ -321,17 +317,17 @@ func TestIndividualTransformsAppliedInSequence(t *testing.T) {
 	// apply first rotation
 	p2, err := A.MulT(p)
 	require.Nil(t, err)
-	assert.True(t, p2.Equal(tuples.NewPoint(1, -1, 0)))
+	assert.True(t, p2.Equal(NewPoint(1, -1, 0)))
 
 	// then apply scaling
 	p3, err := B.MulT(p2)
 	require.Nil(t, err)
-	assert.True(t, p3.Equal(tuples.NewPoint(5, -5, 0)))
+	assert.True(t, p3.Equal(NewPoint(5, -5, 0)))
 
 	// then apply translation
 	p4, err := C.MulT(p3)
 	require.Nil(t, err)
-	assert.True(t, p4.Equal(tuples.NewPoint(15, 0, 7)))
+	assert.True(t, p4.Equal(NewPoint(15, 0, 7)))
 }
 
 /*
@@ -344,7 +340,7 @@ func TestIndividualTransformsAppliedInSequence(t *testing.T) {
 	Then T * p = point(15, 0, 7)
 */
 func TestChainedTransformationReverseOrder(t *testing.T) {
-	p := tuples.NewPoint(1, 0, 1)
+	p := NewPoint(1, 0, 1)
 	A := NewRotationX(math.Pi / 2)
 	B := NewScaling(5, 5, 5)
 	C := NewTranslation(10, 5, 7)
@@ -353,7 +349,7 @@ func TestChainedTransformationReverseOrder(t *testing.T) {
 	Tp, err := T.MulT(p)
 	require.Nil(t, err)
 
-	assert.Equal(t, Tp, tuples.NewPoint(15, 0, 7))
+	assert.Equal(t, Tp, NewPoint(15, 0, 7))
 }
 
 /*
@@ -366,11 +362,11 @@ func TestChainedTransformationReverseOrder(t *testing.T) {
 	Then T * p = point(15, 0, 7)
 */
 func TestFluidApiMethodChainOrder(t *testing.T) {
-	tp := NewTransform(tuples.NewPoint(1, 0, 1)).
+	tp := NewTransform(NewPoint(1, 0, 1)).
 		RotateX(math.Pi/2).
 		Scale(5, 5, 5).
 		Translate(10, 5, 7).
 		Value()
 
-	assert.Equal(t, tp, tuples.NewPoint(15, 0, 7))
+	assert.Equal(t, tp, NewPoint(15, 0, 7))
 }

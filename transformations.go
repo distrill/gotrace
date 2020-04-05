@@ -1,7 +1,6 @@
-package matrix
+package main
 
 import (
-	"github.com/distrill/gotrace/tuples"
 	"math"
 )
 
@@ -60,12 +59,12 @@ func NewShearing(xy, xz, yx, yz, zx, zy float64) Matrix {
 }
 
 type Transform struct {
-	t tuples.Tuple
+	t Tuple
 	m Matrix
 }
 
 // method chaining is not very idiomatic, particularly here we encourage panic
-func NewTransform(t tuples.Tuple) Transform {
+func NewTransform(t Tuple) Transform {
 	return Transform{t, NewIdentityMatrix(4)}
 }
 
@@ -99,6 +98,6 @@ func (c Transform) Shear(xy, xz, yx, yz, zx, zy float64) Transform {
 	return c
 }
 
-func (c Transform) Value() tuples.Tuple {
+func (c Transform) Value() Tuple {
 	return c.m.MustMulT(c.t)
 }

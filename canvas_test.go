@@ -1,11 +1,10 @@
-package canvas
+package main
 
 import (
 	"bufio"
 	"os"
 	"testing"
 
-	"github.com/distrill/gotrace/colors"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -23,7 +22,7 @@ func TestNewCanvas(t *testing.T) {
 	assert.Equal(t, c.Height, 20)
 	for _, row := range c.Pixels {
 		for _, p := range row {
-			assert.True(t, p.Equal(colors.Black))
+			assert.True(t, p.Equal(Black))
 		}
 	}
 }
@@ -37,8 +36,8 @@ func TestNewCanvas(t *testing.T) {
 */
 func TestWritePixelsToCanvas(t *testing.T) {
 	c := NewCanvas(10, 20)
-	c.WritePixel(2, 3, colors.Red)
-	assert.True(t, c.PixelAt(2, 3).Equal(colors.Red))
+	c.WritePixel(2, 3, Red)
+	assert.True(t, c.PixelAt(2, 3).Equal(Red))
 }
 
 /*
@@ -95,9 +94,9 @@ func TestPPMHeader(t *testing.T) {
 func TestPPMPixels(t *testing.T) {
 	fn := "test.ppm"
 	c := NewCanvas(5, 3)
-	c1 := colors.Color{1.5, 0, 0}
-	c2 := colors.Color{0, 0.5, 0}
-	c3 := colors.Color{-0.5, 0, 1}
+	c1 := Color{1.5, 0, 0}
+	c2 := Color{0, 0.5, 0}
+	c3 := Color{-0.5, 0, 1}
 	c.WritePixel(0, 0, c1)
 	c.WritePixel(2, 1, c2)
 	c.WritePixel(4, 2, c3)
@@ -142,7 +141,7 @@ func TestPPMPixels(t *testing.T) {
 func TestPPMLongLines(t *testing.T) {
 	fn := "test.ppm"
 	c := NewCanvas(10, 2)
-	c1 := colors.Color{1, 0.8, 0.6}
+	c1 := Color{1, 0.8, 0.6}
 	for x := 0; x < 10; x++ {
 		for y := 0; y < 2; y++ {
 			c.WritePixel(x, y, c1)

@@ -1,31 +1,29 @@
-package canvas
+package main
 
 import (
 	"fmt"
 	"math"
 	"os"
-
-	"github.com/distrill/gotrace/colors"
 )
 
 // Canvas - grid of pixels representing image
 type Canvas struct {
 	Width  int
 	Height int
-	Pixels [][]colors.Color
+	Pixels [][]Color
 }
 
 // NewCanvas - initialize pixels grid to given width and heigh
 func NewCanvas(width, height int) Canvas {
-	pixels := make([][]colors.Color, width)
+	pixels := make([][]Color, width)
 	for i := 0; i < width; i++ {
-		pixels[i] = make([]colors.Color, height)
+		pixels[i] = make([]Color, height)
 	}
 	return Canvas{width, height, pixels}
 }
 
 // WritePixel - paint a given pixel a given color
-func (c *Canvas) WritePixel(x, y int, col colors.Color) {
+func (c *Canvas) WritePixel(x, y int, col Color) {
 	if x < 0 {
 		x = 0
 	}
@@ -43,7 +41,7 @@ func (c *Canvas) WritePixel(x, y int, col colors.Color) {
 }
 
 // PixelAt - return pixel color at given coordinates
-func (c Canvas) PixelAt(x, y int) colors.Color {
+func (c Canvas) PixelAt(x, y int) Color {
 	return c.Pixels[x][y]
 }
 
@@ -72,13 +70,8 @@ func (c Canvas) ToPPM(fn string) error {
 	f.Sync()
 
 	// write pixels
-	p := 1
 	for y := 0; y < c.Height; y++ {
 		w := 0
-		if y%int(c.Height/10) == 0 {
-			fmt.Printf("\rwriting %v%%", p*10)
-			p += 1
-		}
 		for x := 0; x < c.Width; x++ {
 			color := c.PixelAt(x, y)
 
@@ -120,7 +113,6 @@ func (c Canvas) ToPPM(fn string) error {
 		}
 		f.WriteString("\n")
 	}
-	fmt.Print("\n")
 	f.WriteString("\n")
 	f.Sync()
 

@@ -1,4 +1,4 @@
-package colors
+package main
 
 import (
 	"math"
@@ -17,9 +17,6 @@ var (
 	Black = Color{0, 0, 0}
 	White = Color{1, 1, 1}
 )
-
-// duplicated from tuple, should be pulled out when we have a better idea what the abstraction looks like
-const epsilon = 0.00001
 
 // duplicated from tuple, should be pulled out when we have a better idea what the abstraction looks like
 func (c Color) Equal(o Color) bool {
