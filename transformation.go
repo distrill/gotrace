@@ -63,39 +63,58 @@ type Transform struct {
 	m Matrix
 }
 
-// method chaining is not very idiomatic, particularly here we encourage panic
+// method chaining
+// not very idiomatic, particularly here we encourage panic
 func NewTransform(t Tuple) Transform {
 	return Transform{t, NewIdentityMatrix(4)}
 }
 
+func (m Matrix) Translate(x, y, z float64) Matrix {
+	return NewTranslation(x, y, z).MustMulM(m)
+}
+
 func (c Transform) Translate(x, y, z float64) Transform {
-	c.m = NewTranslation(x, y, z).MustMulM(c.m)
-	return c
+	return Transform{c.t, c.m.Translate(x, y, z)}
+}
+
+func (m Matrix) Scale(x, y, z float64) Matrix {
+	return NewScaling(x, y, z).MustMulM(m)
 }
 
 func (c Transform) Scale(x, y, z float64) Transform {
-	c.m = NewScaling(x, y, z).MustMulM(c.m)
-	return c
+	return Transform{c.t, c.m.Scale(x, y, z)}
+}
+
+func (m Matrix) RotateX(radians float64) Matrix {
+	return NewRotationX(radians).MustMulM(m)
 }
 
 func (c Transform) RotateX(radians float64) Transform {
-	c.m = NewRotationX(radians).MustMulM(c.m)
-	return c
+	return Transform{c.t, c.m.RotateX(radians)}
+}
+
+func (m Matrix) RotateY(radians float64) Matrix {
+	return NewRotationY(radians).MustMulM(m)
 }
 
 func (c Transform) RotateY(radians float64) Transform {
-	c.m = NewRotationY(radians).MustMulM(c.m)
-	return c
+	return Transform{c.t, c.m.RotateY(radians)}
+}
+
+func (m Matrix) RotateZ(radians float64) Matrix {
+	return NewRotationZ(radians).MustMulM(m)
 }
 
 func (c Transform) RotateZ(radians float64) Transform {
-	c.m = NewRotationZ(radians).MustMulM(c.m)
-	return c
+	return Transform{c.t, c.m.RotateZ(radians)}
+}
+
+func (m Matrix) Shear(xy, xz, yx, yz, zx, zy float64) Matrix {
+	return NewShearing(xy, xz, yx, yz, zx, zy).MustMulM(m)
 }
 
 func (c Transform) Shear(xy, xz, yx, yz, zx, zy float64) Transform {
-	c.m = NewShearing(xy, xz, yx, yz, zx, zy).MustMulM(c.m)
-	return c
+	return Transform{c.t, c.m.Shear(xy, xz, yx, yz, zx, zy)}
 }
 
 func (c Transform) Value() Tuple {
