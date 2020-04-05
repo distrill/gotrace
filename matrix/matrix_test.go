@@ -580,12 +580,6 @@ func TestInverse(t *testing.T) {
 	B, err := A.Inverse()
 	require.Nil(t, err)
 
-	// fmt.Println(A)
-	// cof, err := A.Cofactor(1, 1)
-	// require.Nil(t, err)
-	// fmt.Println(cof)
-	// fmt.Println(A)
-
 	det, err := A.Determinant()
 	require.Nil(t, err)
 	assert.Equal(t, 532.0, det)

@@ -62,6 +62,14 @@ func (A Matrix) MulM(B Matrix) (Matrix, error) {
 	return result, nil
 }
 
+func (A Matrix) MustMulM(B Matrix) Matrix {
+	AB, err := A.MulM(B)
+	if err != nil {
+		panic(err)
+	}
+	return AB
+}
+
 // MulT - multiply a matrix by a tuple
 func (A Matrix) MulT(t tuples.Tuple) (tuples.Tuple, error) {
 	B := Matrix{
@@ -77,6 +85,14 @@ func (A Matrix) MulT(t tuples.Tuple) (tuples.Tuple, error) {
 		return tuples.Tuple{}, err
 	}
 	return tuples.Tuple{r[0][0], r[1][0], r[2][0], r[3][0]}, nil
+}
+
+func (A Matrix) MustMulT(t tuples.Tuple) tuples.Tuple {
+	At, err := A.MulT(t)
+	if err != nil {
+		panic(err)
+	}
+	return At
 }
 
 // MulS - multiply a matrix by a scalar
