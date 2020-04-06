@@ -102,6 +102,7 @@ func TestLightingEyeInPathReflectionVector(t *testing.T) {
 	normv := NewVector(0, 0, -1)
 	light := PointLight{NewPoint(0, 10, -10), Color{1, 1, 1}}
 	result := m.Lighting(light, position, eyev, normv)
+	fmt.Println(result)
 	assert.True(t, Color{1.6364, 1.6364, 1.6364}.Equal(result))
 }
 

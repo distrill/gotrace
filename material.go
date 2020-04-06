@@ -52,7 +52,8 @@ func (m Material) Lighting(light PointLight, position, eyev, normv Tuple) Color 
 		// negative means light reflects away from eye
 		// NOTE the pseudo code had lightv negated here. that seems to just
 		// break everything. it works not-negated. is this a real bug somewhere else?
-		reflectv := lightv.Reflect(normv)
+		// reflectv := lightv.Neg().Reflect(normv)
+		reflectv := lightv.Neg().Reflect(normv)
 		reflectDotEye := reflectv.Dot(eyev)
 
 		if reflectDotEye <= 0 {
