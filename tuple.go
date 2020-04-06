@@ -94,3 +94,7 @@ func (t Tuple) Cross(o Tuple) Tuple {
 		(t.X*o.Y)-(t.Y*o.X),
 	)
 }
+
+func (t Tuple) Reflect(n Tuple) Tuple {
+	return t.Sub(n.Mul(2 * t.Dot(n)))
+}

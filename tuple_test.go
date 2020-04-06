@@ -274,3 +274,31 @@ func TestCrossTwoVectors(t *testing.T) {
 	assert.True(t, a.Cross(b).Equal(NewVector(-1, 2, -1)))
 	assert.True(t, b.Cross(a).Equal(NewVector(1, -2, 1)))
 }
+
+/*
+	Scenario: Reflecting a vector approaching at 45°
+	Given v ← vector(1, -1, 0)
+	And n ← vector(0, 1, 0)
+	When r ← reflect(v, n)
+	Then r = vector(1, 1, 0)
+*/
+func TestReflectVector45Deg(t *testing.T) {
+	v := NewVector(1, -1, 0)
+	n := NewVector(0, 1, 0)
+	r := v.Reflect(n)
+	assert.True(t, r.Equal(NewVector(1, 1, 0)))
+}
+
+/*
+	Scenario: Reflecting a vector off a slanted surface
+	Given v ← vector(0, -1, 0)
+	And n ← vector(√2/2, √2/2, 0)
+	When r ← reflect(v, n)
+	Then r = vector(1, 0, 0)
+*/
+func TestReflectVectorSlantedSurface(t *testing.T) {
+	v := NewVector(0, -1, 0)
+	n := NewVector(math.Sqrt2/2, math.Sqrt2/2, 0)
+	r := v.Reflect(n)
+	assert.True(t, r.Equal(NewVector(1, 0, 0)))
+}

@@ -127,6 +127,14 @@ func (A Matrix) Transpose() (Matrix, error) {
 	return B, nil
 }
 
+func (A Matrix) MustTranspose() Matrix {
+	T, err := A.Transpose()
+	if err != nil {
+		panic(err)
+	}
+	return T
+}
+
 func (A Matrix) Determinant() (float64, error) {
 	if len(A) < 2 || len(A[0]) < 2 {
 		return 0, fmt.Errorf("invalid matrix dimensions for determinant %v x %v", len(A), len(A[0]))
@@ -233,4 +241,12 @@ func (A Matrix) Inverse() (Matrix, error) {
 	}
 
 	return B, nil
+}
+
+func (A Matrix) MustInverse() Matrix {
+	I, err := A.Inverse()
+	if err != nil {
+		panic(err)
+	}
+	return I
 }

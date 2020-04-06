@@ -6,18 +6,19 @@ import (
 
 type Sphere struct {
 	Transform Matrix
+	Material  Material
 }
 
 func NewSphere() Sphere {
-	return Sphere{NewIdentityMatrix(4)}
+	return Sphere{NewIdentityMatrix(4), NewMaterial()}
 }
 
 func (s Sphere) WithTransform(t Matrix) Sphere {
-	return Sphere{t}
+	return Sphere{t, NewMaterial()}
 }
 
-func (s *Sphere) SetTransform(t Matrix) {
-	s.Transform = t
+func (s Sphere) WithMaterial(m Material) Sphere {
+	return Sphere{s.Transform, m}
 }
 
 func (s Sphere) Intersect(r Ray) (Intersections, error) {
@@ -40,4 +41,12 @@ func (s Sphere) Intersect(r Ray) (Intersections, error) {
 	t2 := (-b + math.Sqrt(discriminant)) / (2 * a)
 
 	return Intersections{Intersection{t1, s}, Intersection{t2, s}}, nil
+}
+
+func (s Sphere) NormalAt(p Tuple) Tuple {
+	objectPoint := s.Transform.MustInverse().MustMulT(p)
+	objectNormal := objectPoint.Sub(NewPoint(0, 0, 0))
+	worldNormal := s.Transform.MustInverse().MustTranspose().MustMulT(objectNormal)
+	worldNormal.W = 0
+	return worldNormal.Norm()
 }
